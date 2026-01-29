@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명언 모음 - Daily Inspiration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-1: #667eea;
+            --bg-gradient-2: #764ba2;
+            --bg-gradient-3: #f093fb;
+            --bg-gradient-4: #4facfe;
+            --text-primary: #1a1a2e;
+            --text-secondary: #6b7280;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --accent-color: #667eea;
+            --button-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow-color: rgba(102, 126, 234, 0.3);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient-1: #0f0c29;
+            --bg-gradient-2: #302b63;
+            --bg-gradient-3: #24243e;
+            --bg-gradient-4: #0f0c29;
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent-color: #a78bfa;
+            --button-bg: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
+            --shadow-color: rgba(167, 139, 250, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* 애니메이션 배경 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3), var(--bg-gradient-4));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 플로팅 요소들 */
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 50%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 30px;
+            padding: 60px 50px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 25px 70px var(--shadow-color), 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: fadeIn 0.8s ease-in;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 헤더 영역 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: var(--button-bg);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex: 1;
+        }
+
+        /* 다크모드 토글 */
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            width: 60px;
+            height: 32px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle::after {
+            content: '🌙';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        [data-theme="dark"] .theme-toggle::after {
+            content: '☀️';
+            left: 32px;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* 명언 영역 */
+        .quote-container {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .quote-text {
+            font-size: 2rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+            margin-bottom: 30px;
+            font-weight: 400;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+            letter-spacing: -0.5px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quote-text::before,
+        .quote-text::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            opacity: 0.2;
+        }
+
+        .quote-text::before {
+            content: '"';
+            font-size: 5rem;
+            font-family: Georgia, serif;
+            color: var(--accent-color);
+            top: -30px;
+            left: -10px;
+        }
+
+        .quote-author {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            animation: slideIn 0.6s ease-out 0.2s both;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .quote-author::before {
+            content: '—';
+            color: var(--accent-color);
+        }
+
+        /* 버튼 영역 */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--shadow-color);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .icon-btn {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 14px 24px;
+            font-size: 0.95rem;
+        }
+
+        .icon-btn:hover {
+            background: var(--card-border);
+        }
+
+        /* 기능 아이콘들 */
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            background: var(--card-border);
+        }
+
+        .action-btn.active {
+            background: var(--button-bg);
+            color: white;
+        }
+
+        /* 카운터 */
+        .counter {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .counter::before {
+            content: '📊';
+        }
+
+        /* 토스트 메시지 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 16px 28px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 40px 30px;
+                border-radius: 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .quote-text {
+                font-size: 1.5rem;
+            }
+
+            .quote-text::before {
+                font-size: 4rem;
+                top: -25px;
+                left: -5px;
+            }
+
+            .quote-author {
+                font-size: 1.1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .shape {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .quote-text {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>✨ 오늘의 명언</h1>
+            <div class="theme-toggle" onclick="toggleTheme()"></div>
+        </div>
+
+        <div class="quote-container">
+            <div class="quote-text" id="quoteText"></div>
+            <div class="quote-author" id="quoteAuthor"></div>
+        </div>
+
+        <div class="actions">
+            <button class="action-btn" onclick="toggleFavorite()" id="favBtn" title="즐겨찾기">❤️</button>
+            <button class="action-btn" onclick="copyToClipboard()" title="복사하기">📋</button>
+            <button class="action-btn" onclick="shareQuote()" title="공유하기">🔗</button>
+        </div>
+
+        <div class="button-group">
+            <button onclick="showNewQuote()">
+                <span>✨</span>
+                <span>새로운 명언</span>
+            </button>
+            <button class="icon-btn" onclick="showFavorites()">
+                <span>⭐</span>
+                <span>즐겨찾기 보기</span>
+            </button>
+        </div>
+
+        <div class="counter" id="counter"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const quotes = [
+            {
+                text: "삶이 있는 한 희망은 있다.",
+                author: "키케로"
+            },
+            {
+                text: "산다는것 그것은 치열한 전투이다.",
+                author: "로망 롤랑"
+            },
+            {
+                text: "하루에 3시간을 걸으면 7년 후에 지구를 한바퀴 돌 수 있다.",
+                author: "사무엘 존슨"
+            },
+            {
+                text: "행복의 한 쪽 문이 닫히면 다른 쪽 문이 열린다. 그러나 우리는 종종 닫힌 문을 오래 바라보느라 우리를 향해 열린 문을 보지 못한다.",
+                author: "헬렌 켈러"
+            },
+            {
+                text: "고통이 남기고 간 뒤를 보라. 고난이 지나면 반드시 기쁨이 스며든다.",
+                author: "괴테"
+            },
+            {
+                text: "당신이 할 수 있다고 믿든 할 수 없다고 믿든 믿는 대로 될 것이다.",
+                author: "헨리 포드"
+            },
+            {
+                text: "성공의 비결은 단 한 가지, 잘할 수 있는 일에 광적으로 집중하는 것이다.",
+                author: "톰 모나건"
+            },
+            {
+                text: "자신감 있는 표정을 지으면 자신감이 생긴다.",
+                author: "찰스 다윈"
+            },
+            {
+                text: "평생 살 것처럼 꿈을 꾸어라. 그리고 내일 죽을 것처럼 오늘을 살아라.",
+                author: "제임스 딘"
+            },
+            {
+                text: "진짜 문제는 사람들의 마음이다. 그것은 절대로 물리학이나 윤리학의 문제가 아니다.",
+                author: "아인슈타인"
+            },
+            {
+                text: "해야 할 것을 하라. 모든 것은 타인의 행복을 위해서, 동시에 특히 나의 행복을 위해서이다.",
+                author: "톨스토이"
+            },
+            {
+                text: "시간은 금이다. 하지만 금보다 더 귀중한 것이 시간이다.",
+                author: "에드워드 영"
+            },
+            {
+                text: "겨울이 오면 봄이 멀지 않으리.",
+                author: "셸리"
+            },
+            {
+                text: "행복은 습관이다. 그것을 몸에 지니라.",
+                author: "허버드"
+            },
+            {
+                text: "성공의 비결은 목적을 향한 끊임없는 추구에 있다.",
+                author: "벤저민 디즈레일리"
+            },
+            {
+                text: "길을 잃는 것은 곧 길을 알게 되는 것이다.",
+                author: "동아프리카 속담"
+            },
+            {
+                text: "실패는 성공의 어머니다.",
+                author: "토마스 에디슨"
+            },
+            {
+                text: "꿈을 계속 간직하고 있으면 반드시 실현할 때가 온다.",
+                author: "괴테"
+            },
+            {
+                text: "우리의 인생은 우리가 노력한 만큼 가치가 있다.",
+                author: "몰리에르"
+            },
+            {
+                text: "절대 어제를 후회하지 마라. 인생은 오늘의 나에게 있고 내일은 스스로 만드는 것이다.",
+                author: "L. 론 허버드"
+            }
+        ];
+
+        let currentIndex = -1;
+        let viewedCount = 0;
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        // 테마 토글
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // 저장된 테마 로드
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // 새로운 명언 표시
+        function showNewQuote() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * quotes.length);
+            } while (newIndex === currentIndex && quotes.length > 1);
+
+            currentIndex = newIndex;
+            viewedCount++;
+
+            const quote = quotes[currentIndex];
+            document.getElementById('quoteText').textContent = quote.text;
+            document.getElementById('quoteAuthor').textContent = quote.author;
+            document.getElementById('counter').textContent = `${viewedCount}번째 명언 (전체 ${quotes.length}개)`;
+
+            updateFavoriteButton();
+        }
+
+        // 즐겨찾기 토글
+        function toggleFavorite() {
+            if (currentIndex === -1) return;
+
+            const quote = quotes[currentIndex];
+            const index = favorites.findIndex(f => f.text === quote.text);
+
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showToast('즐겨찾기에서 제거되었습니다');
+            } else {
+                favorites.push(quote);
+                showToast('즐겨찾기에 추가되었습니다 ⭐');
+            }
+
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteButton();
+        }
+
+        // 즐겨찾기 버튼 업데이트
+        function updateFavoriteButton() {
+            if (currentIndex === -1) return;
+
+            const quote = quotes[currentIndex];
+            const isFavorite = favorites.some(f => f.text === quote.text);
+            const btn = document.getElementById('favBtn');
+
+            if (isFavorite) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        // 즐겨찾기 보기
+        function showFavorites() {
+            if (favorites.length === 0) {
+                showToast('즐겨찾기가 비어있습니다');
+                return;
+            }
+
+            const randomFav = favorites[Math.floor(Math.random() * favorites.length)];
+            currentIndex = quotes.findIndex(q => q.text === randomFav.text);
+
+            document.getElementById('quoteText').textContent = randomFav.text;
+            document.getElementById('quoteAuthor').textContent = randomFav.author;
+
+            updateFavoriteButton();
+            showToast(`즐겨찾기 명언 (총 ${favorites.length}개)`);
+        }
+
+        // 클립보드 복사
+        function copyToClipboard() {
+            if (currentIndex === -1) return;
+
+            const quote = quotes[currentIndex];
+            const text = `"${quote.text}" - ${quote.author}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('명언이 복사되었습니다! 📋');
+            }).catch(() => {
+                showToast('복사에 실패했습니다');
+            });
+        }
+
+        // 공유하기
+        function shareQuote() {
+            if (currentIndex === -1) return;
+
+            const quote = quotes[currentIndex];
+            const text = `"${quote.text}" - ${quote.author}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: '오늘의 명언',
+                    text: text
+                }).catch(() => {});
+            } else {
+                copyToClipboard();
+            }
+        }
+
+        // 토스트 메시지 표시
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // 페이지 로드 시 실행
+        window.onload = function() {
+            loadTheme();
+            showNewQuote();
+        };
+
+        // 키보드 단축키
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                showNewQuote();
+            }
+        });
+    </script>
+</body>
+</html>
